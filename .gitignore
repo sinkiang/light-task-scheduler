@@ -1,5 +1,10 @@
-*.iml
-.idea
-.DS_Store
-target
-/dist/
+/**/.settings/
+/**/target/
+/**/.classpath
+/**/.DS_Store
+/**/.project
+/**/logs/
+/**/bin/
+/**/.idea/
+/**/.iml
+/**/*.iml
