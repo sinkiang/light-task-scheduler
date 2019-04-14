@@ -10,6 +10,7 @@ import com.github.ltsopensource.store.jdbc.dbutils.ResultSetHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,7 +90,7 @@ public class RshHandler {
             List<NodeOnOfflineLog> list = new ArrayList<NodeOnOfflineLog>();
             while (rs.next()) {
                 NodeOnOfflineLog log = new NodeOnOfflineLog();
-                log.setLogTime(rs.getTimestamp("log_time"));
+                log.setLogTime(new Date(rs.getLong("log_time")));
                 log.setEvent(rs.getString("event"));
                 log.setNodeType(NodeType.convert(rs.getString("node_type")));
                 log.setClusterName(rs.getString("cluster_name"));

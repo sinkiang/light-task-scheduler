@@ -8,6 +8,7 @@ import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.monitor.access.domain.JVMGCDataPo;
 import com.github.ltsopensource.monitor.access.mysql.MysqlJVMGCAccess;
 import com.github.ltsopensource.store.jdbc.builder.DeleteSql;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.WhereSql;
 
@@ -27,7 +28,7 @@ public class MysqlBackendJVMGCAccess extends MysqlJVMGCAccess implements Backend
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .doDelete();
     }
@@ -46,9 +47,9 @@ public class MysqlBackendJVMGCAccess extends MysqlJVMGCAccess implements Backend
                         "AVG(span_full_gc_collection_count) span_full_gc_collection_count",
                         "AVG(span_full_gc_collection_time) span_full_gc_collection_time")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(" timestamp ASC ")
+                .groupBy(Delim.MYSQL, " timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.JVM_GC_SUM_M_DATA_RSH);
     }
@@ -56,7 +57,7 @@ public class MysqlBackendJVMGCAccess extends MysqlJVMGCAccess implements Backend
     public WhereSql buildWhereSql(JvmDataReq req) {
         return new WhereSql()
                 .andOnNotEmpty("identity = ?", req.getIdentity())
-                .andBetween("timestamp", req.getStartTime(), req.getEndTime());
+                .andBetween(Delim.MYSQL, "timestamp", req.getStartTime(), req.getEndTime());
 
     }
 
@@ -65,6 +66,6 @@ public class MysqlBackendJVMGCAccess extends MysqlJVMGCAccess implements Backend
                 .andOnNotNull("id = ?", request.getId())
                 .andOnNotEmpty("identity = ?", request.getIdentity())
                 .andOnNotEmpty("node_group = ?", request.getNodeGroup())
-                .andBetween("timestamp", request.getStartTime(), request.getEndTime());
+                .andBetween(Delim.MYSQL, "timestamp", request.getStartTime(), request.getEndTime());
     }
 }

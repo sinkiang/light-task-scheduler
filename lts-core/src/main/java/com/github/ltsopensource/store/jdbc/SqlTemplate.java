@@ -11,6 +11,8 @@ public interface SqlTemplate {
 
     void createTable(final String sql) throws SQLException;
 
+    void createOracleTable(final String sql) throws SQLException;
+
     int[] batchInsert(final String sql, final Object[][] params) throws SQLException;
 
     int[] batchUpdate(final String sql, final Object[][] params) throws SQLException;

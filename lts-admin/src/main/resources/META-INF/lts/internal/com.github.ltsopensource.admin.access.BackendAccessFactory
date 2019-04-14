@@ -1,1 +1,2 @@
 mysql=com.github.ltsopensource.admin.access.mysql.MysqlBackendAccessFactory
+oracle=com.github.ltsopensource.admin.access.oracle.OracleBackendAccessFactory

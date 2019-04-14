@@ -10,6 +10,7 @@ import com.github.ltsopensource.queue.domain.JobPo;
 import com.github.ltsopensource.queue.mysql.support.RshHolder;
 import com.github.ltsopensource.store.jdbc.SqlTemplate;
 import com.github.ltsopensource.store.jdbc.SqlTemplateFactory;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.OrderByType;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.UpdateSql;
@@ -35,7 +36,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
                 .select()
                 .all()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
+                .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
                 .where("job_id = ?", jobId)
                 .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
@@ -49,10 +50,10 @@ public class MysqlPreLoader extends AbstractPreLoader {
         try {
             return new UpdateSql(sqlTemplate)
                     .update()
-                    .table(getTableName(taskTrackerNodeGroup))
-                    .set("is_running", true)
-                    .set("task_tracker_identity", taskTrackerIdentity)
-                    .set("gmt_modified", SystemClock.now())
+                    .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
+                    .set(Delim.MYSQL, "is_running", true)
+                    .set(Delim.MYSQL, "task_tracker_identity", taskTrackerIdentity)
+                    .set(Delim.MYSQL, "gmt_modified", SystemClock.now())
                     .where("job_id = ?", jobId)
                     .and("is_running = ?", false)
                     .and("trigger_time = ?", triggerTime)
@@ -72,13 +73,13 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .select()
                     .all()
                     .from()
-                    .table(getTableName(loadTaskTrackerNodeGroup))
+                    .table(Delim.MYSQL, getTableName(loadTaskTrackerNodeGroup))
                     .where("is_running = ?", false)
                     .and("trigger_time< ?", SystemClock.now())
                     .orderBy()
-                    .column("priority", OrderByType.ASC)
-                    .column("trigger_time", OrderByType.ASC)
-                    .column("gmt_created", OrderByType.ASC)
+                    .column(Delim.MYSQL, "priority", OrderByType.ASC)
+                    .column(Delim.MYSQL, "trigger_time", OrderByType.ASC)
+                    .column(Delim.MYSQL, "gmt_created", OrderByType.ASC)
                     .limit(0, loadSize)
                     .list(RshHolder.JOB_PO_LIST_RSH);
         } catch (Exception e) {

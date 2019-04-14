@@ -28,19 +28,19 @@ public class InsertSql {
         this.sqlTemplate = sqlTemplate;
     }
 
-    public InsertSql insert(String table) {
+    public InsertSql insert(Delim delim, String table) {
         this.sql.append("INSERT INTO ");
-        sql.append("`").append(table).append("`");
+        sql.append(delim.get()).append(table).append(delim.get());
         return this;
     }
 
-    public InsertSql insertIgnore(String table) {
-        this.sql.append("INSERT IGNORE INTO ");
-        sql.append("`").append(table).append("`");
-        return this;
-    }
+//    public InsertSql insertIgnore(String table) {
+//        this.sql.append("INSERT IGNORE INTO ");
+//        sql.append("`").append(table).append("`");
+//        return this;
+//    }
 
-    public InsertSql columns(String... columns) {
+    public InsertSql columns(Delim delim, String... columns) {
         if (columns == null || columns.length == 0) {
             throw new JdbcException("columns must have length");
         }
@@ -55,7 +55,7 @@ public class InsertSql {
         for (String column : columns) {
             sql.append(split);
             split = ", ";
-            sql.append("`").append(column.trim()).append("`");
+            sql.append(delim.get()).append(column.trim()).append(delim.get());
         }
         sql.append(") VALUES ");
 

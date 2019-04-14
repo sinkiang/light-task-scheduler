@@ -93,8 +93,9 @@ public class JobQueueApi extends AbstractMVC {
         httpCmd.setCommand(HttpCmdNames.HTTP_CMD_TRIGGER_JOB_MANUALLY);
         httpCmd.addParam("jobId", request.getJobId());
         httpCmd.addParam("nodeGroup", request.getTaskTrackerNodeGroup());
+        List<Node> jobTrackerNodeList = appContext.getBackendNodeAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
 
-        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
+//        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
         if (CollectionUtils.isEmpty(jobTrackerNodeList)) {
             return Builder.build(false, I18nManager.getMessage("job.tracker.not.found"));
         }
@@ -166,7 +167,7 @@ public class JobQueueApi extends AbstractMVC {
 
         boolean success = appContext.getExecutableJobQueue().remove(request.getTaskTrackerNodeGroup(), request.getJobId());
         if (success) {
-            if (StringUtils.isNotEmpty(request.getCronExpression()) && !"null".equals(request.getCronExpression())) {
+            if (StringUtils.isNotEmpty(request.getCronExpression())) {
                 // 是Cron任务, Cron任务队列的也要被删除
                 try {
                     appContext.getCronJobQueue().remove(request.getJobId());
@@ -204,8 +205,9 @@ public class JobQueueApi extends AbstractMVC {
         HttpCmd httpCmd = new DefaultHttpCmd();
         httpCmd.setCommand(HttpCmdNames.HTTP_CMD_LOAD_JOB);
         httpCmd.addParam("nodeGroup", nodeGroup);
+        List<Node> jobTrackerNodeList = appContext.getBackendNodeAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
 
-        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
+//        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
         if (CollectionUtils.isEmpty(jobTrackerNodeList)) {
             response.setMsg(I18nManager.getMessage("job.tracker.not.found"));
             response.setSuccess(false);
@@ -316,8 +318,9 @@ public class JobQueueApi extends AbstractMVC {
         HttpCmd httpCmd = new DefaultHttpCmd();
         httpCmd.setCommand(HttpCmdNames.HTTP_CMD_ADD_JOB);
         httpCmd.addParam("job", JSON.toJSONString(job));
+        List<Node> jobTrackerNodeList = appContext.getBackendNodeAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
 
-        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
+//        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.JOB_TRACKER);
         if (CollectionUtils.isEmpty(jobTrackerNodeList)) {
             return new Pair<Boolean, String>(false, I18nManager.getMessage("job.tracker.not.found"));
         }
@@ -347,7 +350,8 @@ public class JobQueueApi extends AbstractMVC {
 
         String taskTrackerIdentity = jobPo.getTaskTrackerIdentity();
 
-        Node node = appContext.getNodeMemCacheAccess().getNodeByIdentity(taskTrackerIdentity);
+//        Node node = appContext.getNodeMemCacheAccess().getNodeByIdentity(taskTrackerIdentity);
+        Node node = appContext.getBackendNodeAccess().getNodeByIdentity(taskTrackerIdentity);
         if (node == null) {
             return Builder.build(false, "执行该任务的TaskTracker已经离线");
         }

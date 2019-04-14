@@ -60,6 +60,32 @@ public class DbRunner {
         return update(conn, false, sql, params);
     }
 
+    public int updateOracle(Connection conn, String sql) throws SQLException {
+        if (conn == null) {
+            throw new SQLException("Null connection");
+        }
+
+        if (sql == null) {
+            throw new SQLException("Null SQL statement");
+        }
+
+        Statement stmt = null;
+        int rows = 0;
+
+        try {
+            stmt = conn.createStatement();
+            rows = stmt.executeUpdate(sql);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            close(stmt);
+        }
+
+        return rows;
+    }
+
     private int update(Connection conn, boolean closeConn, String sql, Object... params) throws SQLException {
         if (conn == null) {
             throw new SQLException("Null connection");

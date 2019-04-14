@@ -1,2 +1,3 @@
 mysql=com.github.ltsopensource.store.jdbc.datasource.MysqlDataSourceProvider
 h2=com.github.ltsopensource.store.jdbc.datasource.H2DataSourceProvider
+oracle=com.github.ltsopensource.store.jdbc.datasource.OracleDataSourceProvider

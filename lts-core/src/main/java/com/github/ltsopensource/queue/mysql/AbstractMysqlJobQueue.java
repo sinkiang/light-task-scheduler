@@ -27,8 +27,8 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
 
     protected boolean add(String tableName, JobPo jobPo) {
         return new InsertSql(getSqlTemplate())
-                .insert(tableName)
-                .columns("job_id",
+                .insert(Delim.MYSQL, tableName)
+                .columns(Delim.MYSQL, "job_id",
                         "job_type",
                         "priority",
                         "retry_times",
@@ -85,7 +85,7 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName(request))
+                .table(Delim.MYSQL, getTableName(request))
                 .whereSql(whereSql)
                 .single();
         response.setResults(results.intValue());
@@ -96,10 +96,10 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
                     .select()
                     .all()
                     .from()
-                    .table(getTableName(request))
+                    .table(Delim.MYSQL, getTableName(request))
                     .whereSql(whereSql)
                     .orderBy()
-                    .column(CharacterUtils.camelCase2Underscore(request.getField()), OrderByType.convert(request.getDirection()))
+                    .column(Delim.MYSQL, CharacterUtils.camelCase2Underscore(request.getField()), OrderByType.convert(request.getDirection()))
                     .limit(request.getStart(), request.getLimit())
                     .list(RshHolder.JOB_PO_LIST_RSH);
             response.setRows(jobPos);
@@ -132,19 +132,19 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
     private UpdateSql buildUpdateSqlPrefix(JobQueueReq request) {
         return new UpdateSql(getSqlTemplate())
                 .update()
-                .table(getTableName(request))
-                .setOnNotNull("cron_expression", request.getCronExpression())
-                .setOnNotNull("need_feedback", request.getNeedFeedback())
-                .setOnNotNull("ext_params", JSON.toJSONString(request.getExtParams()))
-                .setOnNotNull("trigger_time", JdbcTypeUtils.toTimestamp(request.getTriggerTime()))
-                .setOnNotNull("priority", request.getPriority())
-                .setOnNotNull("max_retry_times", request.getMaxRetryTimes())
-                .setOnNotNull("rely_on_prev_cycle", request.getRelyOnPrevCycle() == null ? true : request.getRelyOnPrevCycle())
-                .setOnNotNull("submit_node_group", request.getSubmitNodeGroup())
-                .setOnNotNull("task_tracker_node_group", request.getTaskTrackerNodeGroup())
-                .setOnNotNull("repeat_count", request.getRepeatCount())
-                .setOnNotNull("repeat_interval", request.getRepeatInterval())
-                .setOnNotNull("gmt_modified", SystemClock.now());
+                .table(Delim.MYSQL, getTableName(request))
+                .setOnNotNull(Delim.MYSQL, "cron_expression", request.getCronExpression())
+                .setOnNotNull(Delim.MYSQL, "need_feedback", request.getNeedFeedback())
+                .setOnNotNull(Delim.MYSQL, "ext_params", JSON.toJSONString(request.getExtParams()))
+                .setOnNotNull(Delim.MYSQL, "trigger_time", JdbcTypeUtils.toTimestamp(request.getTriggerTime()))
+                .setOnNotNull(Delim.MYSQL, "priority", request.getPriority())
+                .setOnNotNull(Delim.MYSQL, "max_retry_times", request.getMaxRetryTimes())
+                .setOnNotNull(Delim.MYSQL, "rely_on_prev_cycle", request.getRelyOnPrevCycle() == null ? true : request.getRelyOnPrevCycle())
+                .setOnNotNull(Delim.MYSQL, "submit_node_group", request.getSubmitNodeGroup())
+                .setOnNotNull(Delim.MYSQL, "task_tracker_node_group", request.getTaskTrackerNodeGroup())
+                .setOnNotNull(Delim.MYSQL, "repeat_count", request.getRepeatCount())
+                .setOnNotNull(Delim.MYSQL, "repeat_interval", request.getRepeatInterval())
+                .setOnNotNull(Delim.MYSQL, "gmt_modified", SystemClock.now());
     }
 
     private WhereSql buildWhereSql(JobQueueReq request) {
@@ -156,8 +156,8 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
                 .andOnNotEmpty("job_type = ?", request.getJobType())
                 .andOnNotEmpty("submit_node_group = ?", request.getSubmitNodeGroup())
                 .andOnNotNull("need_feedback = ?", request.getNeedFeedback())
-                .andBetween("gmt_created", JdbcTypeUtils.toTimestamp(request.getStartGmtCreated()), JdbcTypeUtils.toTimestamp(request.getEndGmtCreated()))
-                .andBetween("gmt_modified", JdbcTypeUtils.toTimestamp(request.getStartGmtModified()), JdbcTypeUtils.toTimestamp(request.getEndGmtModified()));
+                .andBetween(Delim.MYSQL, "gmt_created", JdbcTypeUtils.toTimestamp(request.getStartGmtCreated()), JdbcTypeUtils.toTimestamp(request.getEndGmtCreated()))
+                .andBetween(Delim.MYSQL, "gmt_modified", JdbcTypeUtils.toTimestamp(request.getStartGmtModified()), JdbcTypeUtils.toTimestamp(request.getEndGmtModified()));
     }
 
 }

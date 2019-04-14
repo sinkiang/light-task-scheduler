@@ -4,6 +4,7 @@ import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.core.commons.utils.CollectionUtils;
 import com.github.ltsopensource.monitor.access.domain.JVMGCDataPo;
 import com.github.ltsopensource.monitor.access.face.JVMGCAccess;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.InsertSql;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class MysqlJVMGCAccess extends MysqlAbstractJdbcAccess implements JVMGCAc
         }
 
         InsertSql insertSql = new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("gmt_created",
+                .insert(Delim.MYSQL, getTableName())
+                .columns(Delim.MYSQL, "gmt_created",
                         "identity",
                         "timestamp",
                         "node_type",

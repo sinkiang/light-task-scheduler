@@ -1,1 +1,2 @@
 mysql=com.github.ltsopensource.monitor.access.mysql.MysqlMonitorAccessFactory
+oracle=com.github.ltsopensource.monitor.access.oracle.OracleMonitorAccessFactory

@@ -1,8 +1,10 @@
-package com.github.ltsopensource.admin.access.memory;
+package com.github.ltsopensource.admin.access.mysql;
 
 import com.github.ltsopensource.admin.access.RshHandler;
+import com.github.ltsopensource.admin.access.face.BackendNodeAccess;
 import com.github.ltsopensource.admin.request.NodePaginationReq;
 import com.github.ltsopensource.admin.response.PaginationRsp;
+import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.core.cluster.Node;
 import com.github.ltsopensource.core.cluster.NodeType;
 import com.github.ltsopensource.core.commons.utils.CharacterUtils;
@@ -10,26 +12,23 @@ import com.github.ltsopensource.core.commons.utils.CollectionUtils;
 import com.github.ltsopensource.core.commons.utils.StringUtils;
 import com.github.ltsopensource.core.logger.Logger;
 import com.github.ltsopensource.core.logger.LoggerFactory;
+import com.github.ltsopensource.monitor.access.mysql.MysqlAbstractJdbcAccess;
 import com.github.ltsopensource.store.jdbc.builder.*;
 import com.github.ltsopensource.store.jdbc.dbutils.JdbcTypeUtils;
 
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/6/15.
+ * Created by zhangjianjun on 2017/5/26.
  */
-public class NodeMemCacheAccess extends MemoryAccess {
+public class MysqlBackendNodeAccess extends MysqlAbstractJdbcAccess implements BackendNodeAccess {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MysqlBackendNodeAccess.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NodeMemCacheAccess.class);
-
-    public NodeMemCacheAccess() {
-        createTable(readSqlFile("sql/h2/lts_node.sql"));
+    public MysqlBackendNodeAccess(Config config) {
+        super(config);
     }
 
-    private String getTableName() {
-        return "lts_node";
-    }
-
+    @Override
     public void addNode(List<Node> nodes) {
         for (Node node : nodes) {
             try {
@@ -42,8 +41,8 @@ public class NodeMemCacheAccess extends MemoryAccess {
                 }
 
                 new InsertSql(getSqlTemplate())
-                        .insert(getTableName())
-                        .columns("identity",
+                        .insert(Delim.MYSQL, getTableName())
+                        .columns(Delim.MYSQL, "identity",
                                 "available",
                                 "cluster_name",
                                 "node_type",
@@ -73,39 +72,44 @@ public class NodeMemCacheAccess extends MemoryAccess {
         }
     }
 
+    @Override
     public void clear() {
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .doDelete();
     }
 
+    @Override
     public void removeNode(List<Node> nodes) {
         for (Node node : nodes) {
             try {
                 new DeleteSql(getSqlTemplate())
                         .delete()
                         .from()
-                        .table(getTableName())
+                        .table(Delim.MYSQL, getTableName())
                         .where("identity = ?", node.getIdentity())
                         .doDelete();
             } catch (Exception e) {
                 LOGGER.error("Delete {} error!", node, e);
             }
         }
+
     }
 
+    @Override
     public Node getNodeByIdentity(String identity) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("identity = ?", identity)
                 .single(RshHandler.NODE_RSH);
     }
 
+    @Override
     public List<Node> getNodeByNodeType(NodeType nodeType) {
         NodePaginationReq nodePaginationReq = new NodePaginationReq();
         nodePaginationReq.setNodeType(nodeType);
@@ -113,32 +117,23 @@ public class NodeMemCacheAccess extends MemoryAccess {
         return search(nodePaginationReq);
     }
 
+    @Override
     public List<Node> search(NodePaginationReq request) {
-
         SelectSql selectSql = new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request));
         if (StringUtils.isNotEmpty(request.getField())) {
             selectSql.orderBy()
-                    .column(CharacterUtils.camelCase2Underscore(request.getField()), OrderByType.convert(request.getDirection()));
+                    .column(Delim.MYSQL, CharacterUtils.camelCase2Underscore(request.getField()), OrderByType.convert(request.getDirection()));
         }
         return selectSql.limit(request.getStart(), request.getLimit())
                 .list(RshHandler.NODE_LIST_RSH);
     }
 
-    private WhereSql buildWhereSql(NodePaginationReq request) {
-        return new WhereSql()
-                .andOnNotEmpty("identity = ?", request.getIdentity())
-                .andOnNotEmpty("node_group = ?", request.getNodeGroup())
-                .andOnNotNull("node_type = ?", request.getNodeType() == null ? null : request.getNodeType().name())
-                .andOnNotEmpty("ip = ?", request.getIp())
-                .andOnNotNull("available = ?", request.getAvailable())
-                .andBetween("create_time", JdbcTypeUtils.toTimestamp(request.getStartDate()), JdbcTypeUtils.toTimestamp(request.getEndDate()));
-    }
-
+    @Override
     public PaginationRsp<Node> pageSelect(NodePaginationReq request) {
         PaginationRsp<Node> response = new PaginationRsp<Node>();
 
@@ -146,7 +141,7 @@ public class NodeMemCacheAccess extends MemoryAccess {
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .single();
         response.setResults(results.intValue());
@@ -157,4 +152,20 @@ public class NodeMemCacheAccess extends MemoryAccess {
         }
         return response;
     }
+
+    @Override
+    protected String getTableName() {
+        return "lts_node";
+    }
+
+    private WhereSql buildWhereSql(NodePaginationReq request) {
+        return new WhereSql()
+                .andOnNotEmpty("identity = ?", request.getIdentity())
+                .andOnNotEmpty("node_group = ?", request.getNodeGroup())
+                .andOnNotNull("node_type = ?", request.getNodeType() == null ? null : request.getNodeType().name())
+                .andOnNotEmpty("ip = ?", request.getIp())
+                .andOnNotNull("available = ?", request.getAvailable())
+                .andBetween(Delim.MYSQL, "create_time", JdbcTypeUtils.toTimestamp(request.getStartDate()), JdbcTypeUtils.toTimestamp(request.getEndDate()));
+    }
+
 }

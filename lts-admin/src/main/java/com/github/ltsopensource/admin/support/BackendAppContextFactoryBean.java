@@ -1,7 +1,6 @@
 package com.github.ltsopensource.admin.support;
 
 import com.github.ltsopensource.admin.access.BackendAccessFactory;
-import com.github.ltsopensource.admin.access.memory.NodeMemCacheAccess;
 import com.github.ltsopensource.admin.cluster.BackendAppContext;
 import com.github.ltsopensource.admin.cluster.BackendNode;
 import com.github.ltsopensource.admin.cluster.BackendRegistrySrv;
@@ -116,7 +115,8 @@ public class BackendAppContextFactoryBean implements FactoryBean<BackendAppConte
         appContext.setBackendJVMMemoryAccess(factory.getBackendJVMMemoryAccess(config));
         appContext.setBackendJVMThreadAccess(factory.getBackendJVMThreadAccess(config));
         appContext.setBackendNodeOnOfflineLogAccess(factory.getBackendNodeOnOfflineLogAccess(config));
-        appContext.setNodeMemCacheAccess(new NodeMemCacheAccess());
+        appContext.setBackendNodeAccess(factory.getBackendNodeAccess(config));
+//        appContext.setNodeMemCacheAccess(new NodeMemCacheAccess());
     }
 
 }

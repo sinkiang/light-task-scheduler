@@ -4,6 +4,7 @@ import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.core.commons.utils.CollectionUtils;
 import com.github.ltsopensource.monitor.access.domain.JobClientMDataPo;
 import com.github.ltsopensource.monitor.access.face.JobClientMAccess;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.InsertSql;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class MysqlJobClientMAccess extends MysqlAbstractJdbcAccess implements Jo
             return;
         }
         InsertSql insertSql = new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("gmt_created",
+                .insert(Delim.MYSQL, getTableName())
+                .columns(Delim.MYSQL, "gmt_created",
                         "node_group",
                         "identity",
                         "timestamp",

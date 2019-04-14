@@ -8,6 +8,7 @@ import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.monitor.access.domain.JobClientMDataPo;
 import com.github.ltsopensource.monitor.access.mysql.MysqlJobClientMAccess;
 import com.github.ltsopensource.store.jdbc.builder.DeleteSql;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.WhereSql;
 
@@ -28,7 +29,7 @@ public class MysqlBackendJobClientMAccess extends MysqlJobClientMAccess implemen
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .doDelete();
     }
@@ -44,9 +45,9 @@ public class MysqlBackendJobClientMAccess extends MysqlJobClientMAccess implemen
                         "SUM(submit_fail_store_num) AS submit_fail_store_num",
                         "SUM(handle_feedback_num) AS handle_feedback_num")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(" timestamp ASC ")
+                .groupBy(Delim.MYSQL, " timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.JOB_CLIENT_SUM_M_DATA_RSH);
     }
@@ -57,7 +58,7 @@ public class MysqlBackendJobClientMAccess extends MysqlJobClientMAccess implemen
                 .select()
                 .columns("DISTINCT identity AS identity", "node_group")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .list(RshHandler.NODE_INFO_LIST_RSH);
     }
 
@@ -66,6 +67,6 @@ public class MysqlBackendJobClientMAccess extends MysqlJobClientMAccess implemen
                 .andOnNotNull("id = ?", request.getId())
                 .andOnNotEmpty("identity = ?", request.getIdentity())
                 .andOnNotEmpty("node_group = ?", request.getNodeGroup())
-                .andBetween("timestamp", request.getStartTime(), request.getEndTime());
+                .andBetween(Delim.MYSQL, "timestamp", request.getStartTime(), request.getEndTime());
     }
 }

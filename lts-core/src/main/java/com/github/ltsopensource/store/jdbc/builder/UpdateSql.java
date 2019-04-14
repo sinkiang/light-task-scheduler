@@ -31,27 +31,27 @@ public class UpdateSql {
         return this;
     }
 
-    public UpdateSql table(String table) {
-        sql.append(" `").append(table).append("` ");
+    public UpdateSql table(Delim delim, String table) {
+        sql.append(delim.getLeftSpaces()).append(table).append(delim.getRightSpaces());
         return this;
     }
 
-    public UpdateSql set(String column, Object value) {
+    public UpdateSql set(Delim delim,  String column, Object value) {
         if (params.size() > 0) {
             sql.append(",");
         } else {
             sql.append(" SET ");
         }
-        sql.append("`").append(column).append("`").append(" = ? ");
+        sql.append(delim.get()).append(column).append(delim.get()).append(" = ? ");
         params.add(value);
         return this;
     }
 
-    public UpdateSql setOnNotNull(String column, Object value) {
+    public UpdateSql setOnNotNull(Delim delim, String column, Object value) {
         if (value == null) {
             return this;
         }
-        return set(column, value);
+        return set(delim, column, value);
     }
 
     public UpdateSql where() {
@@ -121,50 +121,54 @@ public class UpdateSql {
         return or(condition, value);
     }
 
-    public UpdateSql andBetween(String column, Object start, Object end) {
+    public UpdateSql andBetween(Delim delim,  String column, Object start, Object end) {
 
         if (start == null && end == null) {
             return this;
         }
 
         if (start != null && end != null) {
-            sql.append(" AND (").append(column).append(" BETWEEN ? AND ? ").append(")");
+            sql.append(" ADN (")
+                    .append(delim.get()).append(column).append(delim.get())
+                    .append(" BETWEEN ? AND ? ").append(")");
             params.add(start);
             params.add(end);
             return this;
         }
 
         if (start == null) {
-            sql.append(column).append(" <= ? ");
+            sql.append(delim.get()).append(column).append(delim.get()).append(" <= ? ");
             params.add(end);
             return this;
         }
 
-        sql.append(column).append(" >= ? ");
+        sql.append(delim.get()).append(column).append(delim.get()).append(" >= ? ");
         params.add(start);
         return this;
     }
 
-    public UpdateSql orBetween(String column, Object start, Object end) {
+    public UpdateSql orBetween(Delim delim,  String column, Object start, Object end) {
 
         if (start == null && end == null) {
             return this;
         }
 
         if (start != null && end != null) {
-            sql.append(" OR (").append(column).append(" BETWEEN ? AND ? ").append(")");
+            sql.append(" OR (")
+                    .append(delim.get()).append(column).append(delim.get())
+                    .append(" BETWEEN ? AND ? ").append(")");
             params.add(start);
             params.add(end);
             return this;
         }
 
         if (start == null) {
-            sql.append(column).append(" <= ? ");
+            sql.append(delim.get()).append(column).append(delim.get()).append(" <= ? ");
             params.add(end);
             return this;
         }
 
-        sql.append(column).append(" >= ? ");
+        sql.append(delim.get()).append(column).append(delim.get()).append(" >= ? ");
         params.add(start);
         return this;
     }

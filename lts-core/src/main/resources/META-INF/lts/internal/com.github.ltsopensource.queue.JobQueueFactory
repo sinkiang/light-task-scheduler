@@ -1,2 +1,3 @@
 mysql=com.github.ltsopensource.queue.mysql.MysqlJobQueueFactory
 mongo=com.github.ltsopensource.queue.mongo.MongoJobQueueFactory
+oracle=com.github.ltsopensource.queue.oracle.OracleJobQueueFactory

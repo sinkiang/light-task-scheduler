@@ -46,6 +46,10 @@ class SqlTemplateImpl implements SqlTemplate {
         update(sql);
     }
 
+    public void createOracleTable(final String sql) throws SQLException {
+        updateOracle(sql);
+    }
+
     @Override
     public int[] batchInsert(String sql, Object[][] params) throws SQLException {
         return batchUpdate(sql, params);
@@ -78,6 +82,15 @@ class SqlTemplateImpl implements SqlTemplate {
         });
     }
 
+    public int updateOracle(final String sql)throws SQLException{
+        return execute(false, new SqlExecutor<Integer>() {
+            @Override
+            public Integer run(Connection conn) throws SQLException {
+                return updateOracle(conn, sql);
+            }
+        });
+    }
+
     @Override
     public int delete(String sql, Object... params) throws SQLException {
         return update(sql, params);
@@ -85,6 +98,10 @@ class SqlTemplateImpl implements SqlTemplate {
 
     public int update(final Connection conn, final String sql, final Object... params) throws SQLException {
         return dbRunner.update(conn, sql, params);
+    }
+
+    public int updateOracle(final Connection conn, final String sql) throws SQLException {
+        return dbRunner.updateOracle(conn, sql);
     }
 
     public <T> T query(final String sql, final ResultSetHandler<T> rsh, final Object... params) throws SQLException {

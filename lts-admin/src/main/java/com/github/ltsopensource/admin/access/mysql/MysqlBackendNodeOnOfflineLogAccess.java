@@ -27,8 +27,8 @@ public class MysqlBackendNodeOnOfflineLogAccess extends MysqlAbstractJdbcAccess 
     @Override
     public void insert(List<NodeOnOfflineLog> nodeOnOfflineLogs) {
         InsertSql insertSql = new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("log_time",
+                .insert(Delim.MYSQL, getTableName())
+                .columns(Delim.MYSQL, "log_time",
                         "event",
                         "node_type",
                         "cluster_name",
@@ -64,10 +64,10 @@ public class MysqlBackendNodeOnOfflineLogAccess extends MysqlAbstractJdbcAccess 
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .orderBy()
-                .column("log_time", OrderByType.DESC)
+                .column(Delim.MYSQL, "log_time", OrderByType.DESC)
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.NODE_ON_OFFLINE_LOG_LIST_RSH);
     }
@@ -78,7 +78,7 @@ public class MysqlBackendNodeOnOfflineLogAccess extends MysqlAbstractJdbcAccess 
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .single();
     }
@@ -88,7 +88,7 @@ public class MysqlBackendNodeOnOfflineLogAccess extends MysqlAbstractJdbcAccess 
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .doDelete();
     }
@@ -98,6 +98,6 @@ public class MysqlBackendNodeOnOfflineLogAccess extends MysqlAbstractJdbcAccess 
                 .andOnNotEmpty("identity = ?", request.getIdentity())
                 .andOnNotEmpty("group = ?", request.getGroup())
                 .andOnNotEmpty("event = ?", request.getEvent())
-                .andBetween("log_time", request.getStartLogTime(), request.getEndLogTime());
+                .andBetween(Delim.MYSQL, "log_time", request.getStartLogTime(), request.getEndLogTime());
     }
 }

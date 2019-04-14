@@ -32,7 +32,8 @@ public class JvmDataApi extends AbstractMVC {
 
         RestfulResponse restfulResponse = new RestfulResponse();
 
-        Node node = appContext.getNodeMemCacheAccess().getNodeByIdentity(identity);
+//        Node node = appContext.getNodeMemCacheAccess().getNodeByIdentity(identity);
+        Node node = appContext.getBackendNodeAccess().getNodeByIdentity(identity);
 
         if (node == null) {
             return Builder.build(false, I18nManager.getMessage("node.dose.not.alive"));

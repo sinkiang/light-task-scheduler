@@ -41,8 +41,8 @@ public class DeleteSql {
         return this;
     }
 
-    public DeleteSql table(String table) {
-        sql.append(" `").append(table.trim()).append("` ");
+    public DeleteSql table(Delim delim, String table) {
+        sql.append(delim.getLeftSpaces()).append(table.trim()).append(delim.getRightSpaces());
         return this;
     }
 
@@ -113,50 +113,52 @@ public class DeleteSql {
         return or(condition, value);
     }
 
-    public DeleteSql andBetween(String column, Object start, Object end) {
+    public DeleteSql andBetween(Delim delim, String column, Object start, Object end) {
 
         if (start == null && end == null) {
             return this;
         }
 
         if (start != null && end != null) {
-            sql.append(" AND (").append(column).append(" BETWEEN ? AND ? ").append(")");
+            sql.append(" AND (")
+                    .append(delim.get()).append(column).append(delim.get())
+                    .append(" BETWEEN ? AND ? ").append(")");
             params.add(start);
             params.add(end);
             return this;
         }
 
         if (start == null) {
-            sql.append(column).append(" <= ? ");
+            sql.append(delim.get()).append(column).append(delim.get()).append(" <= ? ");
             params.add(end);
             return this;
         }
 
-        sql.append(column).append(" >= ? ");
+        sql.append(delim.get()).append(column).append(delim.get()).append(" >= ? ");
         params.add(start);
         return this;
     }
 
-    public DeleteSql orBetween(String column, Object start, Object end) {
+    public DeleteSql orBetween(Delim delim, String column, Object start, Object end) {
 
         if (start == null && end == null) {
             return this;
         }
 
         if (start != null && end != null) {
-            sql.append(" OR (").append(column).append(" BETWEEN ? AND ? ").append(")");
+            sql.append(" OR (").append(delim.get()).append(column).append(delim.get()).append(" BETWEEN ? AND ? ").append(")");
             params.add(start);
             params.add(end);
             return this;
         }
 
         if (start == null) {
-            sql.append(column).append(" <= ? ");
+            sql.append(delim.get()).append(column).append(delim.get()).append(" <= ? ");
             params.add(end);
             return this;
         }
 
-        sql.append(column).append(" >= ? ");
+        sql.append(delim.get()).append(column).append(delim.get()).append(" >= ? ");
         params.add(start);
         return this;
     }

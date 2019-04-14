@@ -8,6 +8,7 @@ import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.monitor.access.domain.JVMThreadDataPo;
 import com.github.ltsopensource.monitor.access.mysql.MysqlJVMThreadAccess;
 import com.github.ltsopensource.store.jdbc.builder.DeleteSql;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.WhereSql;
 
@@ -27,7 +28,7 @@ public class MysqlBackendJVMThreadAccess extends MysqlJVMThreadAccess implements
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .doDelete();
     }
@@ -43,9 +44,9 @@ public class MysqlBackendJVMThreadAccess extends MysqlJVMThreadAccess implements
                         "AVG(dead_locked_thread_count) AS dead_locked_thread_count",
                         "AVG(process_cpu_time_rate) AS process_cpu_time_rate")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(" timestamp ASC ")
+                .groupBy(Delim.MYSQL, " timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.JVM_THREAD_SUM_M_DATA_RSH);
     }
@@ -53,7 +54,7 @@ public class MysqlBackendJVMThreadAccess extends MysqlJVMThreadAccess implements
     public WhereSql buildWhereSql(JvmDataReq req) {
         return new WhereSql()
                 .andOnNotEmpty("identity = ?", req.getIdentity())
-                .andBetween("timestamp", req.getStartTime(), req.getEndTime());
+                .andBetween(Delim.MYSQL, "timestamp", req.getStartTime(), req.getEndTime());
 
     }
 
@@ -62,6 +63,6 @@ public class MysqlBackendJVMThreadAccess extends MysqlJVMThreadAccess implements
                 .andOnNotNull("id = ?", request.getId())
                 .andOnNotEmpty("identity = ?", request.getIdentity())
                 .andOnNotEmpty("node_group = ?", request.getNodeGroup())
-                .andBetween("timestamp", request.getStartTime(), request.getEndTime());
+                .andBetween(Delim.MYSQL, "timestamp", request.getStartTime(), request.getEndTime());
     }
 }

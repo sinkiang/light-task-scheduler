@@ -7,6 +7,7 @@ import com.github.ltsopensource.queue.CronJobQueue;
 import com.github.ltsopensource.queue.domain.JobPo;
 import com.github.ltsopensource.queue.mysql.support.RshHolder;
 import com.github.ltsopensource.store.jdbc.builder.DeleteSql;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 
 /**
@@ -35,7 +36,7 @@ public class MysqlCronJobQueue extends MysqlSchedulerJobQueue implements CronJob
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("job_id = ?", jobId)
                 .single(RshHolder.JOB_PO_RSH);
     }
@@ -45,7 +46,7 @@ public class MysqlCronJobQueue extends MysqlSchedulerJobQueue implements CronJob
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("job_id = ?", jobId)
                 .doDelete() == 1;
     }
@@ -57,7 +58,7 @@ public class MysqlCronJobQueue extends MysqlSchedulerJobQueue implements CronJob
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("task_id = ?", taskId)
                 .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);

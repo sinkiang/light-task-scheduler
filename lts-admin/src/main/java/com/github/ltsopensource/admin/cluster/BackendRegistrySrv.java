@@ -39,13 +39,16 @@ public class BackendRegistrySrv {
         // 取消订阅
         registry.unsubscribe(appContext.getNode(), notifyListener);
         // 清空内存数据
-        appContext.getNodeMemCacheAccess().clear();
+        appContext.getBackendNodeAccess().clear();
+//        appContext.getNodeMemCacheAccess().clear();
         // 重新订阅
         subscribe();
     }
 
     public PaginationRsp<Node> getOnlineNodes(NodePaginationReq request) {
-        return appContext.getNodeMemCacheAccess().pageSelect(request);
+        return appContext.getBackendNodeAccess().pageSelect(request);
+
+//        return appContext.getNodeMemCacheAccess().pageSelect(request);
     }
 
     /**
@@ -88,11 +91,13 @@ public class BackendRegistrySrv {
                 }
                 switch (event) {
                     case ADD:
-                        appContext.getNodeMemCacheAccess().addNode(nodes);
+                        appContext.getBackendNodeAccess().addNode(nodes);
+//                        appContext.getNodeMemCacheAccess().addNode(nodes);
                         LOGGER.info("ADD NODE " + nodes);
                         break;
                     case REMOVE:
-                        appContext.getNodeMemCacheAccess().removeNode(nodes);
+                        appContext.getBackendNodeAccess().removeNode(nodes);
+//                        appContext.getNodeMemCacheAccess().removeNode(nodes);
                         LOGGER.info("REMOVE NODE " + nodes);
                         break;
                 }

@@ -47,8 +47,8 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements JobFeed
         for (JobFeedbackPo jobFeedbackPo : jobFeedbackPos) {
             String jobClientNodeGroup = jobFeedbackPo.getJobRunResult().getJobMeta().getJob().getSubmitNodeGroup();
             new InsertSql(getSqlTemplate())
-                    .insertIgnore(getTableName(jobClientNodeGroup))
-                    .columns("gmt_created", "job_result")
+                    .insert(Delim.MYSQL, getTableName(jobClientNodeGroup))
+                    .columns(Delim.MYSQL, "gmt_created", "job_result")
                     .values(jobFeedbackPo.getGmtCreated(), JSON.toJSONString(jobFeedbackPo.getJobRunResult()))
                     .doInsert();
         }
@@ -60,7 +60,7 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements JobFeed
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName(jobClientNodeGroup))
+                .table(Delim.MYSQL, getTableName(jobClientNodeGroup))
                 .where("id = ?", id)
                 .doDelete() == 1;
     }
@@ -71,7 +71,7 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements JobFeed
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName(jobClientNodeGroup))
+                .table(Delim.MYSQL, getTableName(jobClientNodeGroup))
                 .single()).intValue();
     }
 
@@ -82,9 +82,9 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements JobFeed
                 .select()
                 .all()
                 .from()
-                .table(getTableName(jobClientNodeGroup))
+                .table(Delim.MYSQL, getTableName(jobClientNodeGroup))
                 .orderBy()
-                .column("gmt_created", OrderByType.ASC)
+                .column(Delim.MYSQL, "gmt_created", OrderByType.ASC)
                 .limit(0, top)
                 .list(RshHolder.JOB_FEED_BACK_LIST_RSH);
     }

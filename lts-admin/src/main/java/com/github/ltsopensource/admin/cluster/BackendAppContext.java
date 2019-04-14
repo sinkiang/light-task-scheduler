@@ -1,7 +1,6 @@
 package com.github.ltsopensource.admin.cluster;
 
 import com.github.ltsopensource.admin.access.face.*;
-import com.github.ltsopensource.admin.access.memory.NodeMemCacheAccess;
 import com.github.ltsopensource.admin.web.support.NoRelyJobGenerator;
 import com.github.ltsopensource.biz.logger.JobLogger;
 import com.github.ltsopensource.core.AppContext;
@@ -31,7 +30,8 @@ public class BackendAppContext extends AppContext {
     private BackendJVMThreadAccess backendJVMThreadAccess;
     private BackendNodeOnOfflineLogAccess backendNodeOnOfflineLogAccess;
 
-    private NodeMemCacheAccess nodeMemCacheAccess;
+    private BackendNodeAccess backendNodeAccess;
+//    private NodeMemCacheAccess nodeMemCacheAccess;
 
     private NoRelyJobGenerator noRelyJobGenerator;
 
@@ -165,13 +165,13 @@ public class BackendAppContext extends AppContext {
         this.backendNodeOnOfflineLogAccess = backendNodeOnOfflineLogAccess;
     }
 
-    public NodeMemCacheAccess getNodeMemCacheAccess() {
-        return nodeMemCacheAccess;
-    }
-
-    public void setNodeMemCacheAccess(NodeMemCacheAccess nodeMemCacheAccess) {
-        this.nodeMemCacheAccess = nodeMemCacheAccess;
-    }
+//    public NodeMemCacheAccess getNodeMemCacheAccess() {
+//        return nodeMemCacheAccess;
+//    }
+//
+//    public void setNodeMemCacheAccess(NodeMemCacheAccess nodeMemCacheAccess) {
+//        this.nodeMemCacheAccess = nodeMemCacheAccess;
+//    }
 
     public NoRelyJobGenerator getNoRelyJobGenerator() {
         return noRelyJobGenerator;
@@ -187,5 +187,13 @@ public class BackendAppContext extends AppContext {
 
     public void setBackendRegistrySrv(BackendRegistrySrv backendRegistrySrv) {
         this.backendRegistrySrv = backendRegistrySrv;
+    }
+
+    public BackendNodeAccess getBackendNodeAccess() {
+        return backendNodeAccess;
+    }
+
+    public void setBackendNodeAccess(BackendNodeAccess backendNodeAccess) {
+        this.backendNodeAccess = backendNodeAccess;
     }
 }

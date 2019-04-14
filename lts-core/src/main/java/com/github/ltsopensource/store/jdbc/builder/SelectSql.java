@@ -52,22 +52,36 @@ public class SelectSql {
         return this;
     }
 
+    public SelectSql columns(Delim delim, String... columns) {
+        if (columns == null || columns.length == 0) {
+            throw new JdbcException("columns must have length");
+        }
+
+        String split = "";
+        for (String column : columns) {
+            sql.append(split);
+            split = ",";
+            sql.append(delim.get()).append(column.trim()).append(delim.get()).append(" ");
+        }
+        return this;
+    }
+
     public SelectSql from() {
         sql.append(" FROM ");
         return this;
     }
 
-    public SelectSql table(String table) {
-        sql.append("`").append(table).append("`");
+    public SelectSql table(Delim delim, String table) {
+        sql.append(delim.get()).append(table).append(delim.get());
         return this;
     }
 
-    public SelectSql tables(String... tables) {
+    public SelectSql tables(Delim delim, String... tables) {
         String split = "";
         for (String table : tables) {
             sql.append(split);
             split = ",";
-            sql.append(table.trim()).append(" ");
+            sql.append(delim.get()).append(table.trim()).append(delim.get()).append(" ");
         }
         return this;
     }
@@ -106,7 +120,7 @@ public class SelectSql {
         return this;
     }
 
-    public SelectSql column(String column, OrderByType order) {
+    public SelectSql column(Delim delim, String column, OrderByType order) {
 
         if (StringUtils.isEmpty(column) || order == null) {
             return this;
@@ -117,7 +131,7 @@ public class SelectSql {
         } else if (curOrderByColumnSize > 0) {
             sql.append(" , ");
         }
-        sql.append(" ").append(column).append(" ").append(order);
+        sql.append(delim.getLeftSpaces()).append(column).append(delim.getRightSpaces()).append(order);
         curOrderByColumnSize++;
         return this;
     }
@@ -160,50 +174,54 @@ public class SelectSql {
         return or(condition, value);
     }
 
-    public SelectSql andBetween(String column, Object start, Object end) {
+    public SelectSql andBetween(Delim delim,  String column, Object start, Object end) {
 
         if (start == null && end == null) {
             return this;
         }
 
         if (start != null && end != null) {
-            sql.append(" AND (").append(column).append(" BETWEEN ? AND ? ").append(")");
+            sql.append(" ADN (")
+                    .append(delim.get()).append(column).append(delim.get())
+                    .append(" BETWEEN ? AND ? ").append(")");
             params.add(start);
             params.add(end);
             return this;
         }
 
         if (start == null) {
-            sql.append(" ").append(column).append(" <= ? ");
+            sql.append(" ").append(delim.get()).append(column).append(delim.get()).append(" <= ? ");
             params.add(end);
             return this;
         }
 
-        sql.append("").append(column).append(" >= ? ");
+        sql.append(delim.getLeftSpaces()).append(column).append(delim.get()).append(" >= ? ");
         params.add(start);
         return this;
     }
 
-    public SelectSql orBetween(String column, Object start, Object end) {
+    public SelectSql orBetween(Delim delim,  String column, Object start, Object end) {
 
         if (start == null && end == null) {
             return this;
         }
 
         if (start != null && end != null) {
-            sql.append(" OR (").append(column).append(" BETWEEN ? AND ? ").append(")");
+            sql.append(" OR (")
+                    .append(delim.get()).append(column).append(delim.get())
+                    .append(" BETWEEN ? AND ? ").append(")");
             params.add(start);
             params.add(end);
             return this;
         }
 
         if (start == null) {
-            sql.append(column).append(" <= ? ");
+            sql.append(delim.get()).append(column).append(delim.get()).append(" <= ? ");
             params.add(end);
             return this;
         }
 
-        sql.append(column).append(" >= ? ");
+        sql.append(delim.get()).append(column).append(delim.get()).append(" >= ? ");
         params.add(start);
         return this;
     }
@@ -213,13 +231,31 @@ public class SelectSql {
         return this;
     }
 
-    public SelectSql groupBy(String... columns) {
+    /**
+     * oracle的分页语句
+     * @param start 开始行
+     * @param size 条数
+     * @return sql
+     */
+    public SelectSql limitOracle(int start, int size) {
+        String innerSql = sql.toString();
+        sql = new StringBuilder();
+        sql.append("SELECT * FROM (SELECT tt.*, ROWNUM AS rowno FROM (")
+                .append(innerSql)
+                .append(") tt WHERE ROWNUM <=")
+                .append(start+size)
+                .append(") tmptbl where tmptbl.rowno >=")
+                .append(start);
+        return this;
+    }
+
+    public SelectSql groupBy(Delim delim,  String... columns) {
         sql.append(" GROUP BY ");
         String split = "";
         for (String column : columns) {
             sql.append(split);
             split = ",";
-            sql.append(column.trim()).append(" ");
+            sql.append(delim.get()).append(column.trim()).append(delim.getRightSpaces());
         }
         return this;
     }

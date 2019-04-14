@@ -9,6 +9,7 @@ import com.github.ltsopensource.core.commons.utils.CollectionUtils;
 import com.github.ltsopensource.core.json.JSON;
 import com.github.ltsopensource.queue.mysql.support.RshHolder;
 import com.github.ltsopensource.store.jdbc.JdbcAbstractAccess;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.InsertSql;
 import com.github.ltsopensource.store.jdbc.builder.OrderByType;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
@@ -53,8 +54,8 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
 
     private InsertSql buildInsertSql() {
         return new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("log_time",
+                .insert(Delim.MYSQL, getTableName())
+                .columns(Delim.MYSQL, "log_time",
                         "gmt_created",
                         "log_type",
                         "success",
@@ -119,7 +120,7 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .single();
         response.setResults(results.intValue());
@@ -131,10 +132,10 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .orderBy()
-                .column("log_time", OrderByType.DESC)
+                .column(Delim.MYSQL, "log_time", OrderByType.DESC)
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHolder.JOB_LOGGER_LIST_RSH);
         response.setRows(rows);
@@ -150,7 +151,7 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
                 .andOnNotEmpty("log_type = ?", request.getLogType())
                 .andOnNotEmpty("level = ?", request.getLevel())
                 .andOnNotEmpty("success = ?", request.getSuccess())
-                .andBetween("log_time", JdbcTypeUtils.toTimestamp(request.getStartLogTime()), JdbcTypeUtils.toTimestamp(request.getEndLogTime()))
+                .andBetween(Delim.MYSQL, "log_time", JdbcTypeUtils.toTimestamp(request.getStartLogTime()), JdbcTypeUtils.toTimestamp(request.getEndLogTime()))
                 ;
     }
 

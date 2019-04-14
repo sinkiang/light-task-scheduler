@@ -7,6 +7,7 @@ import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.monitor.access.domain.JobTrackerMDataPo;
 import com.github.ltsopensource.monitor.access.mysql.MysqlJobTrackerMAccess;
 import com.github.ltsopensource.store.jdbc.builder.DeleteSql;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.WhereSql;
 import com.github.ltsopensource.store.jdbc.dbutils.ResultSetHandler;
@@ -39,9 +40,9 @@ public class MysqlBackendJobTrackerMAccess extends MysqlJobTrackerMAccess implem
                         "SUM(exe_exception_num) AS exe_exception_num" ,
                         "SUM(fix_executing_job_num) AS fix_executing_job_num")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(" timestamp ASC ")
+                .groupBy(Delim.MYSQL, " timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.JOB_TRACKER_SUM_M_DATA_RSH);
     }
@@ -50,7 +51,7 @@ public class MysqlBackendJobTrackerMAccess extends MysqlJobTrackerMAccess implem
         return new WhereSql()
                 .andOnNotEmpty("id = ? ", request.getId())
                 .andOnNotEmpty("identity = ?", request.getIdentity())
-                .andBetween("timestamp", request.getStartTime(), request.getEndTime());
+                .andBetween(Delim.MYSQL, "timestamp", request.getStartTime(), request.getEndTime());
     }
 
     @Override
@@ -59,7 +60,7 @@ public class MysqlBackendJobTrackerMAccess extends MysqlJobTrackerMAccess implem
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
                 .doDelete();
     }
@@ -70,7 +71,7 @@ public class MysqlBackendJobTrackerMAccess extends MysqlJobTrackerMAccess implem
                 .select()
                 .columns("DISTINCT identity AS `identity` ")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .list(new ResultSetHandler<List<String>>() {
                     @Override
                     public List<String> handle(ResultSet rs) throws SQLException {

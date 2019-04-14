@@ -9,6 +9,7 @@ import com.github.ltsopensource.queue.ExecutableJobQueue;
 import com.github.ltsopensource.queue.domain.JobPo;
 import com.github.ltsopensource.queue.mysql.support.RshHolder;
 import com.github.ltsopensource.store.jdbc.builder.DeleteSql;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.DropTableSql;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.UpdateSql;
@@ -68,7 +69,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
+                .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
                 .where("job_id = ?", jobId)
                 .doDelete() == 1;
     }
@@ -79,7 +80,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
                 .select()
                 .columns("COUNT(1)")
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
+                .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
                 .where("real_task_id = ?", realTaskId)
                 .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
                 .single();
@@ -90,7 +91,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
+                .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
                 .where("real_task_id = ?", realTaskId)
                 .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
                 .doDelete();
@@ -101,10 +102,10 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
     public void resume(JobPo jobPo) {
         new UpdateSql(getSqlTemplate())
                 .update()
-                .table(getTableName(jobPo.getTaskTrackerNodeGroup()))
-                .set("is_running", false)
-                .set("task_tracker_identity", null)
-                .set("gmt_modified", SystemClock.now())
+                .table(Delim.MYSQL, getTableName(jobPo.getTaskTrackerNodeGroup()))
+                .set(Delim.MYSQL, "is_running", false)
+                .set(Delim.MYSQL, "task_tracker_identity", null)
+                .set(Delim.MYSQL, "gmt_modified", SystemClock.now())
                 .where("job_id=?", jobPo.getJobId())
                 .doUpdate();
     }
@@ -116,7 +117,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
                 .select()
                 .all()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
+                .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
                 .where("is_running = ?", true)
                 .and("gmt_modified < ?", deadline)
                 .list(RshHolder.JOB_PO_LIST_RSH);
@@ -128,7 +129,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
                 .select()
                 .all()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
+                .table(Delim.MYSQL, getTableName(taskTrackerNodeGroup))
                 .where("task_id = ?", taskId)
                 .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);

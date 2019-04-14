@@ -5,6 +5,7 @@ import com.github.ltsopensource.core.support.SystemClock;
 import com.github.ltsopensource.queue.SchedulerJobQueue;
 import com.github.ltsopensource.queue.domain.JobPo;
 import com.github.ltsopensource.queue.mysql.support.RshHolder;
+import com.github.ltsopensource.store.jdbc.builder.Delim;
 import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.builder.UpdateSql;
 
@@ -23,9 +24,9 @@ public abstract class MysqlSchedulerJobQueue extends AbstractMysqlJobQueue imple
     public boolean updateLastGenerateTriggerTime(String jobId, Long lastGenerateTriggerTime) {
         return new UpdateSql(getSqlTemplate())
                 .update()
-                .table(getTableName())
-                .set("last_generate_trigger_time", lastGenerateTriggerTime)
-                .set("gmt_modified", SystemClock.now())
+                .table(Delim.MYSQL, getTableName())
+                .set(Delim.MYSQL, "last_generate_trigger_time", lastGenerateTriggerTime)
+                .set(Delim.MYSQL, "gmt_modified", SystemClock.now())
                 .where("job_id = ? ", jobId)
                 .doUpdate() == 1;
     }
@@ -36,7 +37,7 @@ public abstract class MysqlSchedulerJobQueue extends AbstractMysqlJobQueue imple
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("rely_on_prev_cycle = ?", false)
                 .and("last_generate_trigger_time <= ?", checkTime)
                 .limit(0, topSize)

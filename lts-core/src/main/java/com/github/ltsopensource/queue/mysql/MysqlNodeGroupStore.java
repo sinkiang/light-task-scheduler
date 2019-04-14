@@ -31,7 +31,7 @@ public class MysqlNodeGroupStore extends JdbcAbstractAccess implements NodeGroup
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("node_type = ?", nodeType.name())
                 .and("name = ?", name)
                 .single();
@@ -40,8 +40,8 @@ public class MysqlNodeGroupStore extends JdbcAbstractAccess implements NodeGroup
             return;
         }
         new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("node_type", "name", "gmt_created")
+                .insert(Delim.MYSQL, getTableName())
+                .columns(Delim.MYSQL, "node_type", "name", "gmt_created")
                 .values(nodeType.name(), name, SystemClock.now())
                 .doInsert();
     }
@@ -51,7 +51,7 @@ public class MysqlNodeGroupStore extends JdbcAbstractAccess implements NodeGroup
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("node_type = ?", nodeType.name())
                 .and("name = ?", name)
                 .doDelete();
@@ -63,7 +63,7 @@ public class MysqlNodeGroupStore extends JdbcAbstractAccess implements NodeGroup
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .where("node_type = ?", nodeType.name())
                 .list(RshHolder.NODE_GROUP_LIST_RSH);
     }
@@ -75,7 +75,7 @@ public class MysqlNodeGroupStore extends JdbcAbstractAccess implements NodeGroup
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(
                         new WhereSql()
                         .andOnNotNull("node_type = ?", request.getNodeType() == null ? null : request.getNodeType().name())
@@ -91,14 +91,14 @@ public class MysqlNodeGroupStore extends JdbcAbstractAccess implements NodeGroup
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .table(Delim.MYSQL, getTableName())
                 .whereSql(
                         new WhereSql()
                         .andOnNotNull("node_type = ?", request.getNodeType() == null ? null : request.getNodeType().name())
                         .andOnNotEmpty("name = ?", request.getNodeGroup())
                 )
                 .orderBy()
-                .column("gmt_created", OrderByType.DESC)
+                .column(Delim.MYSQL, "gmt_created", OrderByType.DESC)
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHolder.NODE_GROUP_LIST_RSH);
 
