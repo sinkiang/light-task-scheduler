@@ -23,11 +23,6 @@ public class CommonView {
     @Autowired
     private BackendAppContext appContext;
 
-    @RequestMapping("")
-    public String home(){
-        return "index";
-    }
-
     @RequestMapping("index")
     public String index(){
         return "index";
