@@ -64,7 +64,7 @@ public class OracleBackendJVMMemoryAccess extends OracleJVMMemoryAccess implemen
                 .from()
                 .table(Delim.ORACLE, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.ORACLE, "timestamp")
+                .groupBy("\"timestamp\"")
                 .limitOracle(request.getStart(), request.getLimit())
                 .list(RshHandler.JVM_MEMORY_SUM_M_DATA_RSH);
     }

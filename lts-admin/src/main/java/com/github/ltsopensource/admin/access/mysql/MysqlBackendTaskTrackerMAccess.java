@@ -37,7 +37,7 @@ public class MysqlBackendTaskTrackerMAccess extends MysqlTaskTrackerMAccess impl
                 .from()
                 .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.MYSQL, " timestamp ASC ")
+                .groupBy(" timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.TASK_TRACKER_SUM_M_DATA_RSH);
     }

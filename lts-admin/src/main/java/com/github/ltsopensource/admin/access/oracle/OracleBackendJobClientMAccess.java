@@ -46,7 +46,7 @@ public class OracleBackendJobClientMAccess extends OracleJobClientMAccess implem
                 .from()
                 .table(Delim.ORACLE, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.ORACLE, "timestamp")
+                .groupBy("\"timestamp\"")
                 .limitOracle(request.getStart(), request.getLimit())
                 .list(RshHandler.JOB_CLIENT_SUM_M_DATA_RSH);
     }

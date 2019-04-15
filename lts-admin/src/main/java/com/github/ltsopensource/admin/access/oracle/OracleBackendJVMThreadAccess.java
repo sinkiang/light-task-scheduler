@@ -44,7 +44,7 @@ public class OracleBackendJVMThreadAccess extends OracleJVMThreadAccess implemen
                 .from()
                 .table(Delim.ORACLE, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.ORACLE, "timestamp")
+                .groupBy("\"timestamp\"")
                 .limitOracle(request.getStart(), request.getLimit())
                 .list(RshHandler.JVM_THREAD_SUM_M_DATA_RSH);
     }

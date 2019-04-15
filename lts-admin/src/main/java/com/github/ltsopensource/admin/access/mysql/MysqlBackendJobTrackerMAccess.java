@@ -42,7 +42,7 @@ public class MysqlBackendJobTrackerMAccess extends MysqlJobTrackerMAccess implem
                 .from()
                 .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.MYSQL, " timestamp ASC ")
+                .groupBy(" timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.JOB_TRACKER_SUM_M_DATA_RSH);
     }

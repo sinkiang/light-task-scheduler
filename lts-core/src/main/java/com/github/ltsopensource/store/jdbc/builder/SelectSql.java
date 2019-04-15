@@ -249,13 +249,13 @@ public class SelectSql {
         return this;
     }
 
-    public SelectSql groupBy(Delim delim,  String... columns) {
+    public SelectSql groupBy(String... columns) {
         sql.append(" GROUP BY ");
         String split = "";
         for (String column : columns) {
             sql.append(split);
             split = ",";
-            sql.append(delim.get()).append(column.trim()).append(delim.getRightSpaces());
+            sql.append(column.trim()).append(" ");
         }
         return this;
     }

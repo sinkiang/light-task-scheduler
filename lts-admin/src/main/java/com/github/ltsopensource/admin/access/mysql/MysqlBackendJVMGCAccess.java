@@ -49,7 +49,7 @@ public class MysqlBackendJVMGCAccess extends MysqlJVMGCAccess implements Backend
                 .from()
                 .table(Delim.MYSQL, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.MYSQL, " timestamp ASC ")
+                .groupBy(" timestamp ASC ")
                 .limit(request.getStart(), request.getLimit())
                 .list(RshHandler.JVM_GC_SUM_M_DATA_RSH);
     }

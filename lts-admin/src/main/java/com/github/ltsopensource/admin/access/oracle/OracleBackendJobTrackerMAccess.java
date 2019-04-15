@@ -40,7 +40,7 @@ public class OracleBackendJobTrackerMAccess extends OracleJobTrackerMAccess impl
                 .from()
                 .table(Delim.ORACLE, getTableName())
                 .whereSql(buildWhereSql(request))
-                .groupBy(Delim.ORACLE, "timestamp")
+                .groupBy("\"timestamp\"")
                 .limitOracle(request.getStart(), request.getLimit())
                 .list(RshHandler.JOB_TRACKER_SUM_M_DATA_RSH);
     }
