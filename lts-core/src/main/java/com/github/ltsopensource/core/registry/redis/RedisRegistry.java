@@ -61,13 +61,17 @@ public class RedisRegistry extends FailbackRegistry {
 
         this.reconnectPeriod = config.getParameter(ExtConfig.REGISTRY_RECONNECT_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RECONNECT_PERIOD);
 
-        String[] addrs = address.split(",");
+        // 解析密码 redis://127.0.0.1:6379?123456
+        String[] addrs = address.split("\\?");
+        String password = addrs.length > 1 ? addrs[1] : null;
+        address = addrs[0];
+        
+        addrs = address.split(",");
         for (String addr : addrs) {
             int i = addr.indexOf(':');
             String host = addr.substring(0, i);
             int port = Integer.parseInt(addr.substring(i + 1));
-            this.jedisPools.put(addr, new JedisPool(redisConfig, host, port,
-                    Constants.DEFAULT_TIMEOUT));
+            this.jedisPools.put(addr, new JedisPool(redisConfig, host, port, Constants.DEFAULT_TIMEOUT, password));
         }
 
         this.expirePeriod = config.getParameter(ExtConfig.REDIS_SESSION_TIMEOUT, Constants.DEFAULT_SESSION_TIMEOUT);
