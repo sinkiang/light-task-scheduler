@@ -16,6 +16,6 @@ RUN unzip /opt/lts-1.8.0-bin.zip -d /opt \
 
 VOLUME /opt/lts/conf /opt/lts/logs
 
-EXPOSE 3502
+EXPOSE 3502 8719
 
 CMD sh /opt/lts/bin/jobtracker.sh zoo start

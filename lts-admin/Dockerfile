@@ -16,7 +16,7 @@ RUN unzip /opt/lts-1.8.0-bin.zip -d /opt \
 
 VOLUME /opt/lts/conf /opt/lts/logs
 
-EXPOSE 8081
+EXPOSE 8081 8730
 
 HEALTHCHECK --interval=30s --start-period=60s \
   CMD curl -I http://localhost:8081 || exit 1
